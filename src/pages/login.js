@@ -15,8 +15,8 @@ function LoginPage() {
     event.preventDefault();
     // Handle login logic here
 
+    const URL = process.env.NEXTAUTH_URL;
     if (!login) {
-      const URL = process.env.NEXTAUTH_URL;
       if (repeatPassword !== password) {
         alert('incorrect repeat password!');
         return;
