@@ -1,31 +1,78 @@
+import axios from 'axios';
+import { signIn } from 'next-auth/react';
+import { useRouter } from 'next/router';
 import React, { useState } from 'react';
 
 function LoginPage() {
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
+  const [name, setName] = useState('');
   const [password, setPassword] = useState('');
   const [repeatPassword, setRepeatPassword] = useState('');
 
-  const [login, setLogin] = useState(false);
-
-  const handleLogin = (event) => {
+  const [login, setLogin] = useState(true);
+  const router = useRouter();
+  const handleLogin = async (event) => {
     event.preventDefault();
     // Handle login logic here
-    console.log(username, password);
+
     if (!login) {
-      console.log(username, password, repeatPassword);
+      const URL = process.env.NEXTAUTH_URL;
+      if (repeatPassword !== password) {
+        alert('incorrect repeat password!');
+        return;
+      }
+      if (password.length <= 5) {
+        alert('Password should have more than 5 characters');
+        return;
+      }
+      try {
+        const newUser = {
+          name: name,
+          password: password,
+          email: email,
+          repeatPassword: repeatPassword,
+        };
+        const { data } = await axios.post(`${URL}/api/user`, newUser);
+        console.log(data);
+        alert('register success');
+      } catch (error) {
+        alert(error.response.data.message);
+      }
+    } else {
+      const result = await signIn('credentials', {
+        redirect: false,
+        email: email,
+        password: password,
+      });
+      if (!result.error) {
+        router.replace('/');
+      } else {
+        alert('fail to login');
+      }
     }
   };
 
   return (
     <div className='form-container'>
       <form onSubmit={handleLogin} className='login-form'>
+        {!login && (
+          <div className='form-group'>
+            <label htmlFor='name'>Name:</label>
+            <input
+              type='text'
+              id='name'
+              value={name}
+              onChange={(event) => setName(event.target.value)}
+            />
+          </div>
+        )}
         <div className='form-group'>
-          <label htmlFor='username'>Username:</label>
+          <label htmlFor='username'>Email:</label>
           <input
-            type='text'
+            type='email'
             id='username'
-            value={username}
-            onChange={(event) => setUsername(event.target.value)}
+            value={email}
+            onChange={(event) => setEmail(event.target.value)}
           />
         </div>
         <div className='form-group'>

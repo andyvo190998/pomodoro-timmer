@@ -1,6 +1,9 @@
+import { useSession } from 'next-auth/react';
 import React from 'react';
 
-const Layout = ({ title, children }) => {
+const Layout = ({ children }) => {
+  const { data: session } = useSession();
+  console.log(session);
   return (
     <>
       <header className='flex justify-center'>
@@ -8,7 +11,7 @@ const Layout = ({ title, children }) => {
           <p className='text-lg font-bold text-white'>Pomodoro Timer</p>
           <div className='flex space-x-3'>
             <p>Setting</p>
-            <p>User</p>
+            <p>{session ? session.user.name : 'Login'}</p>
           </div>
         </nav>
       </header>
