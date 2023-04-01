@@ -2,6 +2,7 @@ import axios from 'axios';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import React, { useState } from 'react';
+import Layout from './components/Layout';
 
 function LoginPage() {
   const [email, setEmail] = useState('');
@@ -52,68 +53,70 @@ function LoginPage() {
   };
 
   return (
-    <div className='form-container'>
-      <form onSubmit={handleLogin} className='login-form'>
-        {!login && (
+    <Layout>
+      <div className='form-container'>
+        <form onSubmit={handleLogin} className='login-form'>
+          {!login && (
+            <div className='form-group'>
+              <label htmlFor='name'>Name:</label>
+              <input
+                type='text'
+                id='name'
+                value={name}
+                onChange={(event) => setName(event.target.value)}
+              />
+            </div>
+          )}
           <div className='form-group'>
-            <label htmlFor='name'>Name:</label>
+            <label htmlFor='username'>Email:</label>
             <input
-              type='text'
-              id='name'
-              value={name}
-              onChange={(event) => setName(event.target.value)}
+              type='email'
+              id='username'
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
             />
           </div>
-        )}
-        <div className='form-group'>
-          <label htmlFor='username'>Email:</label>
-          <input
-            type='email'
-            id='username'
-            value={email}
-            onChange={(event) => setEmail(event.target.value)}
-          />
-        </div>
-        <div className='form-group'>
-          <label htmlFor='password'>Password:</label>
-          <input
-            type='password'
-            id='password'
-            value={password}
-            onChange={(event) => setPassword(event.target.value)}
-          />
-        </div>
-        {!login && (
           <div className='form-group'>
-            <label htmlFor='password'>Repeat Password:</label>
+            <label htmlFor='password'>Password:</label>
             <input
               type='password'
               id='password'
-              value={repeatPassword}
-              onChange={(event) => setRepeatPassword(event.target.value)}
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
             />
           </div>
+          {!login && (
+            <div className='form-group'>
+              <label htmlFor='password'>Repeat Password:</label>
+              <input
+                type='password'
+                id='password'
+                value={repeatPassword}
+                onChange={(event) => setRepeatPassword(event.target.value)}
+              />
+            </div>
+          )}
+          <button type='submit' className='login-button'>
+            {login ? 'Login' : 'Register'}
+          </button>
+        </form>
+        {login ? (
+          <div className='mb-4 mt-8'>
+            Don&apos;t have an account? &nbsp;
+            <button className='text-white' onClick={() => setLogin(false)}>
+              Register here
+            </button>
+          </div>
+        ) : (
+          <div className='mb-4 mt-8'>
+            You already have an account? &nbsp;
+            <button className='text-white' onClick={() => setLogin(true)}>
+              Login here
+            </button>
+          </div>
         )}
-        <button type='submit' className='login-button'>
-          {login ? 'Login' : 'Register'}
-        </button>
-      </form>
-      {login ? (
-        <div className='mb-4 mt-8'>
-          Don&apos;t have an account? &nbsp;
-          <button className='text-white' onClick={() => setLogin(false)}>
-            Register here
-          </button>
-        </div>
-      ) : (
-        <div className='mb-4 mt-8'>
-          You already have an account? &nbsp;
-          <button className='text-white' onClick={() => setLogin(true)}>
-            Login here
-          </button>
-        </div>
-      )}
-    </div>
+      </div>
+    </Layout>
   );
 }
 
