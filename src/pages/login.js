@@ -16,7 +16,6 @@ function LoginPage() {
     // Handle login logic here
 
     if (!login) {
-      const URL = process.env.NEXTAUTH_URL;
       if (repeatPassword !== password) {
         alert('incorrect repeat password!');
         return;
@@ -32,7 +31,7 @@ function LoginPage() {
           email: email,
           repeatPassword: repeatPassword,
         };
-        const { data } = await axios.post(`${URL}/api/user`, newUser);
+        const { data } = await axios.post(`/api/user`, newUser);
         console.log(data);
         alert('register success');
       } catch (error) {
