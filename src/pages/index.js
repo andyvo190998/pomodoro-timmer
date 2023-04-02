@@ -16,8 +16,6 @@ import { Menu } from '@headlessui/react';
 import CircularProgress from '@mui/material/CircularProgress';
 import Box from '@mui/material/Box';
 
-import Link from 'next/link';
-
 const Index = () => {
   const { state, dispatch } = useContext(Store);
 
