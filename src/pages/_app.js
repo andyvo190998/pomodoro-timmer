@@ -1,4 +1,4 @@
-import { StoreProvider } from '@/Store';
+import { StoreProvider } from '@/store';
 import '@/styles/globals.css';
 import { SessionProvider } from 'next-auth/react';
 

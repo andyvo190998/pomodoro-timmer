@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useRef, useState } from 'react';
 import Layout from './components/Layout';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
-import { Store } from '@/Store';
+import { Store } from '@/store';
 
 const Index = () => {
   const { state, dispatch } = useContext(Store);
