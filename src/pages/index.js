@@ -4,10 +4,40 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
 import { Store } from '@/store';
 
+import Button from '@mui/material/Button';
+import TextField from '@mui/material/TextField';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
+import axios from 'axios';
+import { Menu } from '@headlessui/react';
+
+import CircularProgress from '@mui/material/CircularProgress';
+import Box from '@mui/material/Box';
+
+import Link from 'next/link';
+
 const Index = () => {
   const { state, dispatch } = useContext(Store);
 
+  useEffect(() => {
+    const getSavedItem = async () => {
+      const { data } = await axios.get('/api/tasks');
+      if (!data) {
+        return;
+      } else {
+        dispatch({
+          type: 'ADD_TASK',
+          payload: data,
+        });
+      }
+    };
+    getSavedItem();
+  }, [dispatch]);
+
   const [length, setLength] = useState(state.duration);
+  const [input, setInput] = useState('');
 
   // useEffect(() => {
   //   setMinute(Math.floor(state.duration / 60));
@@ -77,6 +107,63 @@ const Index = () => {
       shortBreak();
     }
   }
+
+  // dialog
+  const [open, setOpen] = useState(false);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleSubmit = async () => {
+    const newTask = {
+      task: input,
+    };
+    const { data } = await axios.post('/api/tasks', newTask);
+    dispatch({ type: 'ADD_TASK', payload: data });
+    setOpen(false);
+  };
+
+  const handleDelete = async (id) => {
+    const { data } = await axios.delete(`/api/tasks/${id}`);
+    dispatch({
+      type: 'ADD_TASK',
+      payload: data,
+    });
+
+    console.log(data);
+  };
+
+  const [editTask, setEditTask] = useState();
+  const [edit, setEdit] = useState(false);
+
+  const openEdit = (task) => {
+    setEdit(true);
+    setInput(task.name);
+    setEditTask(task);
+    setOpen(true);
+  };
+
+  const handleEdit = async () => {
+    const updateTask = {
+      name: input,
+      id: editTask._id,
+    };
+    console.log(updateTask);
+    const { data } = await axios.put('/api/tasks', updateTask);
+    dispatch({
+      type: 'ADD_TASK',
+      payload: data,
+    });
+    setEdit(false);
+    setInput('');
+    setOpen(false);
+  };
+
   return (
     <Layout
       title={`${Math.floor(length / 60).toLocaleString(undefined, {
@@ -155,20 +242,60 @@ const Index = () => {
             </button>
           </div>
         </div>
-        <div className='mt-2 mb-2 p-4 rounded-lg bg-white flex justify-between'>
-          <div className='flex justify-around'>
-            <CheckCircleRoundedIcon style={{ color: '#ECECEC' }} />
-            <p className='text-black ml-2 font-semibold'>This is task 1</p>
-          </div>
-          <button className='third-button'>
-            <MoreVertIcon style={{ color: 'grey' }} fontSize='small' />
-          </button>
-        </div>
+
+        {state.tasks.length === 0 ? (
+          <Box sx={{ display: 'flex' }}>
+            <CircularProgress color='success' />
+          </Box>
+        ) : (
+          state.tasks.map((task) => (
+            <div
+              key={task._id}
+              className='mt-2 mb-2 p-4 rounded-lg bg-white flex justify-between'
+            >
+              <div className='flex justify-around'>
+                <CheckCircleRoundedIcon style={{ color: '#ECECEC' }} />
+                <p className='text-black ml-2 font-semibold'>{task.name}</p>
+              </div>
+              {/* <button className='third-button'>
+              <MoreVertIcon style={{ color: 'grey' }} fontSize='small' />
+            </button> */}
+              <Menu as='div' className='relative inline-block'>
+                <Menu.Button className='text-white'>
+                  <MoreVertIcon style={{ color: 'grey' }} fontSize='small' />
+                </Menu.Button>
+                <Menu.Items className='absolute bg-emerald-500 right-0 w-28 origin-top-right shadow-lg rounded-lg bg-teal-500'>
+                  <Menu.Item>
+                    <button
+                      onClick={() => openEdit(task)}
+                      className='primary-button dropdown-link rounded-lg w-full'
+                    >
+                      EDIT
+                    </button>
+                  </Menu.Item>
+                  <Menu.Item>
+                    <button
+                      onClick={() => handleDelete(task._id)}
+                      className='primary-button dropdown-link rounded-lg w-full'
+                    >
+                      DELETE
+                    </button>
+                  </Menu.Item>
+                </Menu.Items>
+              </Menu>
+            </div>
+          ))
+        )}
+
         <div
           className='add-btn border-dashed border-2 border-gray-400 mt-2 mb-2 p-4 rounded-lg flex justify-center'
-          onClick={() => console.log('click')}
+          onClick={() => handleClickOpen()}
         >
-          <button className='font-semibold' style={{ color: '#ECD6D6' }}>
+          <button
+            onClick={handleClickOpen}
+            className='font-semibold'
+            style={{ color: '#ECD6D6' }}
+          >
             Add Task
           </button>
         </div>
@@ -176,8 +303,55 @@ const Index = () => {
           <p>Pomos: 6/7 Finish At: 07:48 (0.4h)</p>
         </div>
       </div>
+
+      {/* dialog */}
+      <div>
+        <Dialog open={open} onClose={handleClose}>
+          <DialogTitle>ADD NEW TASK</DialogTitle>
+          <DialogContent>
+            <TextField
+              autoFocus
+              margin='dense'
+              id='name'
+              label='Your Task.'
+              type='text'
+              fullWidth
+              variant='standard'
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClose}>Cancel</Button>
+            {edit ? (
+              <Button onClick={handleEdit}>Edit</Button>
+            ) : (
+              <Button onClick={handleSubmit}>Add</Button>
+            )}
+          </DialogActions>
+        </Dialog>
+      </div>
     </Layout>
   );
 };
 
 export default Index;
+
+// export const getServerSideProps = async (context) => {
+//   const session = await getSession(context);
+
+//   if (!session) {
+//     return;
+//   }
+
+//   await connectDB();
+
+//   const data = await Task.find().lean();
+//   console.log(data);
+
+//   return {
+//     props: {
+//       tasks: JSON.parse(JSON.stringify(data)),
+//     },
+//   };
+// };

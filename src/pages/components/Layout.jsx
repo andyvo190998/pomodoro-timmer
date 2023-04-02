@@ -59,9 +59,9 @@ const Layout = ({ title, children }) => {
       <main className='container m-10 flex flex-col justify-center w-full'>
         {children}
       </main>
-      <footer className='flex justify-center items-center shadow-inner'>
+      {/* <footer className='flex justify-center items-center shadow-inner'>
         <span className='text-center text-white'>Copyright @ 2023 Andy</span>
-      </footer>
+      </footer> */}
     </div>
   );
 };

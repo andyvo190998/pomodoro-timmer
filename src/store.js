@@ -4,6 +4,7 @@ export const Store = createContext();
 const initialState = {
   typeid: 'work',
   duration: 1500,
+  tasks: [],
 };
 
 const reducer = (state, action) => {
@@ -11,10 +12,15 @@ const reducer = (state, action) => {
     case 'TYPE_CHANGE':
       console.log('action.payload');
       return {
+        ...state,
         typeid: action.payload.typeid,
         duration: action.payload.duration,
       };
-    //   return state;
+    case 'ADD_TASK':
+      return {
+        ...state,
+        tasks: action.payload,
+      };
 
     default:
       return state;
