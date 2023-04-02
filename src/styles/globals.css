@@ -68,3 +68,82 @@ input[type="password"] {
 .dropdown-link {
   @apply flex p-2;
 }
+
+.primary-button {
+  transition-duration: 0.4s;
+}
+
+.primary-button:hover {
+  background-color: #d28e78;
+  /* Green */
+  color: white;
+}
+
+.secondary-button {
+  transition-duration: 0.4s;
+  white-space: nowrap;
+  padding: 0px 15px;
+
+
+}
+
+.secondary-button:hover {
+  background-color: #edcdc2;
+  /* Green */
+  color: white;
+  border-radius: 2px;
+}
+
+footer {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 50px;
+  width: 100%;
+  overflow: hidden;
+}
+
+.third-button {
+  transition-duration: 0.4s;
+  white-space: nowrap;
+  border-radius: 50%;
+}
+
+.third-button:hover {
+  background-color: #edcdc2;
+  color: white;
+  border-radius: 2px;
+}
+
+.add-btn {
+  background-color: #A74341;
+  cursor: pointer;
+  transition: 0.4s;
+}
+
+.add-btn:hover {
+  background-color: #bd4e4c;
+  color: white;
+}
+
+.time-overview {
+  background-color: #C25D5C;
+  display: flex;
+  justify-content: center;
+  padding: 15px;
+  margin-top: 20px;
+  border-top: solid 1px #ccc;
+}
+
+.body {
+  background-color: #BA4A49;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.header {
+  width: 120%;
+  padding: 0px 50px 0px 40px;
+}

@@ -3,7 +3,7 @@ import Link from 'next/link';
 import React from 'react';
 import { Menu } from '@headlessui/react';
 
-const Layout = ({ children }) => {
+const Layout = ({ title, children }) => {
   const { data: session, status } = useSession();
 
   const logoutHandler = () => {
@@ -12,9 +12,10 @@ const Layout = ({ children }) => {
   };
 
   return (
-    <>
-      <header className='flex justify-center'>
-        <nav className='flex h-12 justify-between shadow-md items-center px-4 w-3/5'>
+    <div className='flex flex-col justify-center w-max'>
+      <header className='header flex justify-center'>
+        <title>{title}</title>
+        <nav className='flex h-12 justify-between shadow-md items-center px-4 w-full'>
           <Link href='/'>
             <p className='text-lg font-bold text-white'>Pomodoro Timer</p>
           </Link>
@@ -55,13 +56,13 @@ const Layout = ({ children }) => {
           </div>
         </nav>
       </header>
-      <main className='container m-auto flex justify-center w-3/5'>
+      <main className='container m-10 flex flex-col justify-center w-full'>
         {children}
       </main>
-      {/* <footer className='flex justify-center items-center shadow-inner'>
+      <footer className='flex justify-center items-center shadow-inner'>
         <span className='text-center text-white'>Copyright @ 2023 Andy</span>
-      </footer> */}
-    </>
+      </footer>
+    </div>
   );
 };
 
