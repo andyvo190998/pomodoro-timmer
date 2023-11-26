@@ -14,11 +14,10 @@ p {
   @apply text-white;
 }
 
-
 .login-form {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-end;
   /* margin-top: 50px; */
   box-sizing: border-box;
 }
@@ -27,6 +26,8 @@ p {
   margin-bottom: 20px;
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
 }
 
 label {
@@ -34,9 +35,9 @@ label {
   width: 100px;
 }
 
-input[type="email"],
-input[type="text"],
-input[type="password"] {
+input[type='email'],
+input[type='text'],
+input[type='password'] {
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 5px;
@@ -83,8 +84,6 @@ input[type="password"] {
   transition-duration: 0.4s;
   white-space: nowrap;
   padding: 0px 15px;
-
-
 }
 
 .secondary-button:hover {
@@ -116,7 +115,7 @@ footer {
 }
 
 .add-btn {
-  background-color: #A74341;
+  background-color: #a74341;
   cursor: pointer;
   transition: 0.4s;
 }
@@ -127,7 +126,7 @@ footer {
 }
 
 .time-overview {
-  background-color: #C25D5C;
+  background-color: #c25d5c;
   display: flex;
   justify-content: center;
   padding: 15px;
@@ -136,14 +135,24 @@ footer {
 }
 
 .body {
-  background-color: #BA4A49;
+  /* background: #ba4a49; */
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
 }
 
-.header {
-  width: 120%;
-  padding: 0px 50px 0px 40px;
+@media screen and (max-width: 450px) {
+  .form-group {
+    /* margin-bottom: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center; */
+    flex-direction: column;
+  }
+  .form-group label {
+    text-align: start;
+    width: 100%;
+  }
 }

@@ -4,11 +4,8 @@ import hashPassword from '@/util/hash';
 
 const handler = async (req, res) => {
   if (req.method === 'POST') {
-    console.log('create new user');
-
     await connectDB();
 
-    console.log(req.body.email);
     const existingUser = await User.findOne({ email: req.body.email });
 
     if (existingUser) {
@@ -23,7 +20,6 @@ const handler = async (req, res) => {
     });
 
     const data = await newUser.save();
-    console.log(data);
     res.send(data);
   }
 };

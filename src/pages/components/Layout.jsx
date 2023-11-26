@@ -7,15 +7,14 @@ const Layout = ({ title, children }) => {
   const { data: session, status } = useSession();
 
   const logoutHandler = () => {
-    console.log('logout');
     signOut({ callbackUrl: '/login' });
   };
 
   return (
     <div className='flex flex-col justify-center w-max'>
-      <header className='header flex justify-center'>
+      <header className='flex justify-center my-5'>
         <title>{title}</title>
-        <nav className='flex h-12 justify-between shadow-md items-center px-4 w-full'>
+        <nav className='flex h-12 justify-between shadow-md items-center w-full px-2'>
           <Link href='/'>
             <p className='text-lg font-bold text-white'>Pomodoro Timer</p>
           </Link>
@@ -24,7 +23,7 @@ const Layout = ({ title, children }) => {
             {session ? (
               <Menu as='div' className='relative inline-block'>
                 <Menu.Button className='text-white'>
-                  {status === 'loading' ? 'Loading' : session.user.name}
+                  {status === 'loading' ? 'Loading' : session.session.user.name}
                 </Menu.Button>
                 <Menu.Items className='absolute bg-white right-0 w-28 origin-top-right shadow-lg'>
                   <Menu.Item>
@@ -56,12 +55,12 @@ const Layout = ({ title, children }) => {
           </div>
         </nav>
       </header>
-      <main className='container m-10 flex flex-col justify-center w-full'>
+      <main className='container flex flex-col justify-center w-full'>
         {children}
       </main>
-      {/* <footer className='flex justify-center items-center shadow-inner'>
+      <footer className='flex justify-center items-center shadow-inner'>
         <span className='text-center text-white'>Copyright @ 2023 Andy</span>
-      </footer> */}
+      </footer>
     </div>
   );
 };

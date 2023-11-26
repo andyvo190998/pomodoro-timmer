@@ -5,7 +5,6 @@ const { getSession } = require('next-auth/react');
 
 const handler = async (req, res) => {
   if (req.method === 'DELETE') {
-    console.log('delete');
     const session = await getSession({ req });
 
     if (!session) {
@@ -16,7 +15,7 @@ const handler = async (req, res) => {
     await connectDB();
 
     await Task.findByIdAndDelete(req.query.id);
-    const data = await Task.find();
+    const data = await Task.find({ userId: session.token.id });
     res.send(data);
   }
 };

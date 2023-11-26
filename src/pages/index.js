@@ -15,32 +15,47 @@ import { Menu } from '@headlessui/react';
 
 import CircularProgress from '@mui/material/CircularProgress';
 import Box from '@mui/material/Box';
+import { useSession } from 'next-auth/react';
 
 const Index = () => {
   const { state, dispatch } = useContext(Store);
+  const { data: session } = useSession();
 
   useEffect(() => {
     const getSavedItem = async () => {
-      const { data } = await axios.get('/api/tasks');
-      if (!data) {
-        return;
-      } else {
-        dispatch({
-          type: 'ADD_TASK',
-          payload: data,
+      await axios
+        .get('/api/tasks')
+        .then((res) =>
+          dispatch({
+            type: 'GET_TASK',
+            payload: res.data,
+          })
+        )
+        .catch((err) => {
+          if (err.response.data.message === 'Login required!') {
+            dispatch({
+              type: 'REQUIRE_LOGIN',
+              payload: false,
+            });
+          } else {
+            console.error(err);
+          }
         });
-      }
+      // if (data === undefined) return;
+      // if (!data.data) {
+      //   return;
+      // } else {
+      //   dispatch({
+      //     type: 'ADD_TASK',
+      //     payload: data.data,
+      //   });
+      // }
     };
     getSavedItem();
-  }, [dispatch]);
+  }, []);
 
   const [length, setLength] = useState(state.duration);
   const [input, setInput] = useState('');
-
-  // useEffect(() => {
-  //   setMinute(Math.floor(state.duration / 60));
-  //   setSecond(state.duration - minute * 60);
-  // }, [state, dispatch, minute]);
 
   const shortBreak = () => {
     dispatch({
@@ -83,7 +98,7 @@ const Index = () => {
     if (isRunning) {
       intervalRef.current = setInterval(() => {
         setLength((prevSeconds) => prevSeconds - 1);
-      }, 1000);
+      }, 1);
     }
     return () => {
       clearInterval(intervalRef.current);
@@ -98,11 +113,18 @@ const Index = () => {
     setIsRunning(false);
   };
 
-  if (length === 0) {
-    if (state.typeid === 'short-break') {
-      pomodoro();
-    } else if (state.typeid === 'pomodoro') {
+  const [typeBreak, setTypeBreak] = useState(1);
+
+  if (length <= 0) {
+    if (state.typeid === 'pomodoro' && typeBreak < 2) {
       shortBreak();
+    } else if (state.typeid === 'short-break') {
+      setTypeBreak((previous) => previous + 1);
+      pomodoro();
+    } else if (typeBreak >= 2) {
+      setTypeBreak(1);
+      longBreak();
+      pomodoro();
     }
   }
 
@@ -132,8 +154,6 @@ const Index = () => {
       type: 'ADD_TASK',
       payload: data,
     });
-
-    console.log(data);
   };
 
   const [editTask, setEditTask] = useState();
@@ -151,7 +171,6 @@ const Index = () => {
       name: input,
       id: editTask._id,
     };
-    console.log(updateTask);
     const { data } = await axios.put('/api/tasks', updateTask);
     dispatch({
       type: 'ADD_TASK',
@@ -172,27 +191,31 @@ const Index = () => {
     >
       <div
         style={{ backgroundColor: '#C25D5C' }}
-        // className='flex-col justify-center align-top rounded p-10 m-5 shrink min-w-fit'
-
         className='flex flex-col rounded p-6 shadow-md'
       >
-        {/* <div className='type-break flex flex-row justify-center flex-nowrap'> */}
         <div className='flex justify-center mb-10'>
           <button
             onClick={pomodoro}
-            className='secondary-button text-white shrink  p-1'
+            className={`secondary-button p-1 text-white shrink`}
+            style={{ border: state.typeid === 'pomodoro' && '1px solid' }}
           >
             Pomodoro
           </button>
           <button
             onClick={shortBreak}
             className='secondary-button text-white shrink p-1'
+            style={{
+              border: state.typeid === 'short-break' ? '1px solid' : 'none',
+            }}
           >
             Short Break
           </button>
           <button
             onClick={longBreak}
             className='secondary-button text-white shrink  p-1'
+            style={{
+              border: state.typeid === 'long-break' ? '1px solid' : 'none',
+            }}
           >
             Long Break
           </button>
@@ -243,7 +266,10 @@ const Index = () => {
 
         {state.tasks.length === 0 ? (
           <Box sx={{ display: 'flex' }}>
-            <CircularProgress color='success' />
+            {session === null
+              ? 'Login required!'
+              : // <CircularProgress color='success' />
+                'Empty task'}
           </Box>
         ) : (
           state.tasks.map((task) => (
@@ -255,9 +281,6 @@ const Index = () => {
                 <CheckCircleRoundedIcon style={{ color: '#ECECEC' }} />
                 <p className='text-black ml-2 font-semibold'>{task.name}</p>
               </div>
-              {/* <button className='third-button'>
-              <MoreVertIcon style={{ color: 'grey' }} fontSize='small' />
-            </button> */}
               <Menu as='div' className='relative inline-block'>
                 <Menu.Button className='text-white'>
                   <MoreVertIcon style={{ color: 'grey' }} fontSize='small' />

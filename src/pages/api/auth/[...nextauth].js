@@ -9,13 +9,13 @@ const verifyPassword = async (password, hashedPassword) => {
   return isValid;
 };
 export default NextAuth({
-  session: {
-    jwt: true,
-  },
-  secret: process.env.NEXTAUTH_SECRET,
+  // session: {
+  //   jwt: true,
+  // },
+  // secret: process.env.NEXTAUTH_SECRET,
   providers: [
     CredentialsProvider({
-      async authorize(credentials) {
+      async authorize(credentials, req) {
         await connectDB();
         const user = await User.findOne({ email: credentials.email });
 
@@ -31,8 +31,23 @@ export default NextAuth({
         if (!isValid) {
           throw new Error('Incorrect password');
         }
-        return { email: user.email, name: user.name };
+        const userObject = { email: user.email, name: user.name, id: user._id };
+        return Promise.resolve(userObject);
       },
     }),
   ],
+
+  callbacks: {
+    async jwt({ token, user }) {
+      if (user !== undefined) {
+        if (user.id) {
+          token = { ...token, id: user.id };
+        }
+      }
+      return token;
+    },
+    async session(seshProps) {
+      return seshProps;
+    },
+  },
 });
