@@ -143,8 +143,13 @@ const Index = () => {
     const newTask = {
       task: input,
     };
-    const { data } = await axios.post('/api/tasks', newTask);
-    dispatch({ type: 'ADD_TASK', payload: data });
+    await axios
+      .post('/api/tasks', newTask)
+      .then((res) => {
+        dispatch({ type: 'ADD_TASK', payload: res.data });
+        setInput('');
+      })
+      .catch((err) => console.error(err));
     setOpen(false);
   };
 
@@ -332,22 +337,25 @@ const Index = () => {
           <DialogContent>
             <TextField
               autoFocus
-              margin='dense'
+              // margin='dense'
               id='name'
               label='Your Task.'
               type='text'
-              fullWidth
-              variant='standard'
+              // fullWidth
+              // variant='outlined'
               value={input}
               onChange={(e) => setInput(e.target.value)}
+              sx={{ mt: 1, mb: 1 }}
             />
           </DialogContent>
           <DialogActions>
-            <Button onClick={handleClose}>Cancel</Button>
+            <Button variant='outline' sx={{ mr: 1 }} onClick={handleClose}>
+              Cancel
+            </Button>
             {edit ? (
               <Button onClick={handleEdit}>Edit</Button>
             ) : (
-              <Button onClick={handleSubmit}>Add</Button>
+              <Button onClick={handleSubmit}>Create Task</Button>
             )}
           </DialogActions>
         </Dialog>
