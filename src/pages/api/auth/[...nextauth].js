@@ -15,7 +15,7 @@ export default NextAuth({
   // secret: process.env.NEXTAUTH_SECRET,
   providers: [
     CredentialsProvider({
-      async authorize(credentials, req) {
+      async authorize(credentials) {
         await connectDB();
         const user = await User.findOne({ email: credentials.email });
 
